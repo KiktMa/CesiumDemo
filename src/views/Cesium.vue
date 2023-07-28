@@ -1,12 +1,17 @@
 <template>
-  <div>
-    <div id="cesiumContainer"></div>
-    <!-- eslint-disable-next-line -->
-    <div class="coordinates">{{ coordinates }}</div>
+  <div id="cesiumContainer">
+    <div class="flyto">
+      <FlyToLocationButton />
+    </div>
+    <div class="coordinates">
+      {{ coordinates }}
+    </div>
   </div>
 </template>
 <script>
+import FlyToLocationButton from '@/components/server/Tms.vue'
 export default {
+  components: { FlyToLocationButton },
   name: "cesium",
   data() {
     return {
@@ -16,12 +21,14 @@ export default {
   },
   methods: {
     initCesium() {
+      Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3MzAzNTU3My03M2ExLTQ2MDQtOWM0NS02YzQ5NTQxMTllZmQiLCJpZCI6MTI4MDgwLCJpYXQiOjE2Nzg0MjYwODd9.eIe_aJK-BXWCd44gcrL2QHLglOobDsCFlgf_kLRrPM0';
+
       let viewer = new Cesium.Viewer("cesiumContainer", {
         // 地球3D显示
         terrainProvider: Cesium.createWorldTerrain(),
         animation: true,
         timeline: true,
-        fullscreenButton: false,
+        fullscreenButton: true,
         geocoder: true,
         baseLayerPicker: true,
       });
@@ -48,37 +55,11 @@ export default {
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
       this.viewer = viewer;
-
-      // 打开前端页面时直接加载到指定的地球位置
-      const { Cartesian3 } = Cesium;
-      const { Rectangle } = Cesium;
-      const { HeadingPitchRange } = Cesium;
-      const center = Cartesian3.fromDegrees(
-        91.97385008333333,
-        27.596977972222223,
-        5000
-      );
-      const rectangle = Rectangle.fromCartesianArray([center]);
-      viewer.camera.flyTo({
-        destination: center,
-        orientation: new HeadingPitchRange(0, -Math.PI / 2, 0),
-      });
-      // 添加akka发布的tms服务
-      // viewer.imageryLayers.addImageryProvider(
-      //   new Cesium.UrlTemplateImageryProvider({
-      //     url: "http://192.168.163.131:9090/map/{z}/{x}/{y}",
-      //     format: "image/png",
-      //     maximumLevel: 18,
-      //   })
-      // );
-      // layer.alpha = 1.0;
-      // //两倍亮度
-      // layer.brightness = 1.0;
     },
     addDom() {
       window.cesiumViewer.imageryLayers.addImageryProvider(
         new Cesium.WebMapTileServiceImageryProvider({
-          url: `http://t0.tianditu.gov.cn/img_w/wmts?tk=a89df02c93e5474e9ebeb81a32fcb487`, //记得换成自己的key
+          url: `http://t0.tianditu.gov.cn/img_w/wmts?tk=cca9e1fdd43ef73b853d73bce39e3624`, //记得换成自己的key
           layer: "img",
           style: "default",
           tileMatrixSetID: "w",
@@ -88,7 +69,7 @@ export default {
       );
       window.cesiumViewer.imageryLayers.addImageryProvider(
         new Cesium.WebMapTileServiceImageryProvider({
-          url: `http://t0.tianditu.gov.cn/cia_w/wmts?tk=a89df02c93e5474e9ebeb81a32fcb487`, //记得换成自己的key
+          url: `http://t0.tianditu.gov.cn/cia_w/wmts?tk=cca9e1fdd43ef73b853d73bce39e3624`, //记得换成自己的key
           layer: "cia",
           style: "default",
           tileMatrixSetID: "w",
@@ -97,24 +78,53 @@ export default {
         })
       );
     },
-    addNav() {
-      window.cesiumViewer.cesiumWidget.creditContainer.style.display = "none";
-      //   window.cesiumViewer.terrainProvider = cesiumTerrainProvider;
-      window.cesiumViewer.extend(Cesium.viewerCesiumNavigationMixin, {});
-    },
+    // addNav() {
+    // window.cesiumViewer.cesiumWidget.creditContainer.style.display = "none";
+    //   window.cesiumViewer.terrainProvider = cesiumTerrainProvider;
+    // window.cesiumViewer.extend(Cesium.viewerCesiumNavigationMixin, {});
+    // },
   },
   mounted() {
     this.initCesium();
-    this.addNav();
+    // this.addNav();
     this.addDom();
   },
-  destroyed() {
-    this.viewer.destroy();
-  },
+  // destroyed() {
+  //   this.viewer.destroy();
+  // },
 };
 </script>
 <style scoped>
 #cesiumContainer {
   height: 100%;
+  /* 使用 calc() 函数计算地球容器的高度，减去 2px 以避免滚动条的干扰 */
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.coordinates {
+  position: absolute;
+  left: 75%;
+  /* 水平居中 */
+  bottom: 40px;
+  /* 距离底部 10px */
+  transform: translateX(-50%);
+  /* 将坐标框水平居中 */
+  min-width: 185px;
+  z-index: 100;
+  color: #fff;
+  background-color: rgba(150, 52, 52, 0.2);
+}
+
+.flyto {
+  position: absolute;
+  left: 1%;
+  top: 1%;
+  min-width: 185px;
+  z-index: 100;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 </style>
