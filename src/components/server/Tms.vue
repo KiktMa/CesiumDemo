@@ -14,9 +14,9 @@ export default {
             const { Rectangle } = Cesium;
             const { HeadingPitchRange } = Cesium;
             const center = Cartesian3.fromDegrees( // 指定要跳转的经纬度
-                91.97385008333333,
-                27.596977972222223,
-                5000
+                121.98055,
+                28.35197,
+                20
             );
             Rectangle.fromCartesianArray([center]);
             window.cesiumViewer.camera.flyTo({

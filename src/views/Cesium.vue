@@ -10,6 +10,7 @@
 </template>
 <script>
 import FlyToLocationButton from '@/components/server/Tms.vue'
+import axios from 'axios'
 export default {
   components: { FlyToLocationButton },
   name: "cesium",
@@ -78,6 +79,14 @@ export default {
         })
       );
     },
+    async fetchTilesetJson() {
+      try {
+        const response = await axios.get('/3dtiles/tileset.json');
+        console.log(response.data); // 处理返回的数据
+      } catch (error) {
+        console.error('Error fetching tileset.json:', error);
+      }
+    }
     // addNav() {
     // window.cesiumViewer.cesiumWidget.creditContainer.style.display = "none";
     //   window.cesiumViewer.terrainProvider = cesiumTerrainProvider;
@@ -87,6 +96,7 @@ export default {
   mounted() {
     this.initCesium();
     // this.addNav();
+    this.fetchTilesetJson();
     this.addDom();
   },
   // destroyed() {
