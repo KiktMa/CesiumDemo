@@ -92,7 +92,7 @@ export default {
       var tileset = window.cesiumViewer.scene.primitives.add(new Cesium.Cesium3DTileset({
         url: '/static/3dtiles/tileset.json',
         shadows: Cesium.ShadowMode.DISABLED,
-        luminanceAtZenith: 1 //Cesium 1.53版本后增加的luminanceAtZenith，用来调节程序纹理的亮度
+        luminanceAtZenith: 1
       }));
       tileset.readyPromise.then(function (layer) {
         console.log('----->', layer, layer.content);
@@ -123,7 +123,7 @@ export default {
     },
 
     handle() {
-      var handler = new Cesium.ScreenSpaceEventHandler(Viewer.canvas);
+      var handler = new Cesium.ScreenSpaceEventHandler(window.cesiumViewer.canvas);
 
       handler.setInputAction(function (movement) {
 
