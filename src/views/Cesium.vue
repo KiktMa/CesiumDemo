@@ -26,15 +26,16 @@ export default {
 
       let viewer = new Cesium.Viewer("cesiumContainer", {
         // 地球3D显示
+        infoBox: false,
         terrainProvider: Cesium.createWorldTerrain(),
         animation: true,
         timeline: true,
         fullscreenButton: true,
         geocoder: true,
-        baseLayerPicker: true,
+        baseLayerPicker: false,
       });
       window.cesiumViewer = viewer; //不要把cesium实例挂载到vue的data对象中(有性能问题)
-
+      window.cesiumViewer._cesiumWidget._creditContainer.style.display = 'none';
       // 实时显示鼠标所在位置的地球位置经纬度以及高程信息
       viewer.cesiumWidget.screenSpaceEventHandler.setInputAction((movement) => {
         const cartesian = viewer.camera.pickEllipsoid(
@@ -79,24 +80,90 @@ export default {
         })
       );
     },
-    async fetchTilesetJson() {
-      try {
-        const response = await axios.get('/3dtiles/tileset.json');
-        console.log(response.data); // 处理返回的数据
-      } catch (error) {
-        console.error('Error fetching tileset.json:', error);
-      }
+    // async fetchTilesetJson() {
+    //   try {
+    //     const response = await axios.get('/3dtiles/tileset.json');
+    //     console.log(response.data); // 处理返回的数据
+    //   } catch (error) {
+    //     console.error('Error fetching tileset.json:', error);
+    //   }
+    // }
+    add3dTiles() {
+      var tileset = window.cesiumViewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+        url: '/static/3dtiles/tileset.json',
+        shadows: Cesium.ShadowMode.DISABLED,
+        luminanceAtZenith: 1 //Cesium 1.53版本后增加的luminanceAtZenith，用来调节程序纹理的亮度
+      }));
+      tileset.readyPromise.then(function (layer) {
+        console.log('----->', layer, layer.content);
+        tileset.style = new Cesium.Cesium3DTileStyle({
+          color: {
+            conditions: [
+              // ["true", "color('white')"]
+              ["true", "rgba(37,25,68,1)"]
+            ]
+          },
+        });
+        Viewer.flyTo(tileset);
+        handle();
+      }).otherwise(function (error) {
+        throw (error);
+      });
+
+      // 设置瓦片加载完成监听事件，获取所有的所有feature数据信息
+      tileset.tileLoad.addEventListener(function (tile) {
+        let content = tile.content;
+        console.log(content);
+        let featuresLength = content.featuresLength;
+        console.log("要素数量为：" + featuresLength);
+        console.log("第一个要素为：");
+        let feature = content.getFeature(0);
+        console.log(feature);
+      })
+    },
+
+    handle() {
+      var handler = new Cesium.ScreenSpaceEventHandler(Viewer.canvas);
+
+      handler.setInputAction(function (movement) {
+
+        //还原前选择要素的本颜色
+        if (selectPickedEntity) {
+          selectPickedEntity.color = Cesium.Color.WHITE;
+          selectPickedEntity = null;
+        }
+
+        var pickingEntity = window.cesiumViewer.scene.pick(movement.position);
+        //判断选择是否为Cesium3DTileFeature
+        if (pickingEntity instanceof Cesium.Cesium3DTileFeature) {
+          selectPickedEntity = pickingEntity;
+
+          var propertyNames = pickingEntity.getPropertyNames();
+          var length = propertyNames.length;
+          for (var i = 0; i < length; ++i) {
+            var propertyName = propertyNames[i];
+            console.log(propertyName + ': ' + pickingEntity.getProperty(propertyName));
+          }
+          //隐藏选中的要素
+          //pickingEntity.show = false;
+
+          //将模型变为黄色高亮
+          pickingEntity.color = Cesium.Color.RED;
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     }
-    // addNav() {
-    // window.cesiumViewer.cesiumWidget.creditContainer.style.display = "none";
-    //   window.cesiumViewer.terrainProvider = cesiumTerrainProvider;
-    // window.cesiumViewer.extend(Cesium.viewerCesiumNavigationMixin, {});
-    // },
   },
+  // addNav() {
+  // window.cesiumViewer.cesiumWidget.creditContainer.style.display = "none";
+  //   window.cesiumViewer.terrainProvider = cesiumTerrainProvider;
+  // window.cesiumViewer.extend(Cesium.viewerCesiumNavigationMixin, {});
+  // },
+
   mounted() {
     this.initCesium();
+    this.add3dTiles();
     // this.addNav();
-    this.fetchTilesetJson();
+    // this.fetchTilesetJson();
     this.addDom();
   },
   // destroyed() {
