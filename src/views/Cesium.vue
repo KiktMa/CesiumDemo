@@ -2,6 +2,7 @@
   <div id="cesiumContainer">
     <div class="flyto">
       <FlyToLocationButton />
+      <ThreeD />
     </div>
     <div class="coordinates">
       {{ coordinates }}
@@ -10,9 +11,10 @@
 </template>
 <script>
 import FlyToLocationButton from '@/components/server/Tms.vue'
+import ThreeD from '@/components/server/ThreeD.vue';
 import axios from 'axios'
 export default {
-  components: { FlyToLocationButton },
+  components: { FlyToLocationButton, ThreeD },
   name: "cesium",
   data() {
     return {
@@ -36,6 +38,7 @@ export default {
       });
       window.cesiumViewer = viewer; //不要把cesium实例挂载到vue的data对象中(有性能问题)
       window.cesiumViewer._cesiumWidget._creditContainer.style.display = 'none';
+
       // 实时显示鼠标所在位置的地球位置经纬度以及高程信息
       viewer.cesiumWidget.screenSpaceEventHandler.setInputAction((movement) => {
         const cartesian = viewer.camera.pickEllipsoid(
@@ -104,7 +107,7 @@ export default {
             ]
           },
         });
-        Viewer.flyTo(tileset);
+        window.cesiumViewer.flyTo(tileset);
         handle();
       }).otherwise(function (error) {
         throw (error);
@@ -199,9 +202,7 @@ export default {
   position: absolute;
   left: 1%;
   top: 1%;
-  min-width: 185px;
   z-index: 100;
   color: #fff;
-  background-color: rgba(0, 0, 0, 0.2);
 }
 </style>
