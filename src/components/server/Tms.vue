@@ -1,5 +1,12 @@
 <template>
-    <el-button type="primary" @click="flyToLocation">FlyTwo</el-button>
+    <el-dropdown trigger="click" :hide-on-click="hidem">
+        <el-button type="primary">
+            TMS<i class="el-icon-arrow-down el-icon--right"></i>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item><el-button type="success" icon="el-icon-check" @click="flyToLocation" circle></el-button>FlyTwo</el-dropdown-item>
+        </el-dropdown-menu>
+    </el-dropdown>
 </template>
 
 <script>
@@ -18,11 +25,11 @@ export default {
                 28.35197,
                 20
             );
-            Rectangle.fromCartesianArray([center]);
-            window.cesiumViewer.camera.flyTo({
-                destination: center,
-                orientation: new HeadingPitchRange(0, -Math.PI / 2, 0),
-            });
+            // Rectangle.fromCartesianArray([center]);
+            // window.cesiumViewer.camera.flyTo({
+            //     destination: center,
+            //     orientation: new HeadingPitchRange(0, -Math.PI / 2, 0),
+            // });
         },
         toTms() {
             // 添加akka发布的tms服务
