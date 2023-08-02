@@ -9,9 +9,15 @@
             <el-dropdown-item><el-switch v-model="value2" @click.stop>
                 </el-switch> 导航</el-dropdown-item>
             <el-dropdown-item><el-switch v-model="value3" @click.stop>
-                </el-switch> 时间轴</el-dropdown-item>
+                </el-switch> 信息盒子</el-dropdown-item>
             <el-dropdown-item><el-switch v-model="value4" @click.stop>
-                </el-switch> 其他</el-dropdown-item>
+                </el-switch> 全屏</el-dropdown-item>
+            <el-dropdown-item><el-switch v-model="value5" @click.stop>
+                </el-switch> 基本层</el-dropdown-item>
+            <el-dropdown-item><el-switch v-model="value6" @click.stop>
+                </el-switch> 3D地形</el-dropdown-item>
+            <el-dropdown-item><el-switch v-model="value7" @click.stop>
+                </el-switch> Coder</el-dropdown-item>
         </el-dropdown-menu>
     </el-dropdown>
 </template>
@@ -25,8 +31,10 @@ export default {
             value2: false,
             value3: false,
             value4: false,
+            value5: false,
+            value6: false,
+            value7: false,
             hidem: false,
-            labelText: '动画'
         }
     },
     methods: {
