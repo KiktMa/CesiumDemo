@@ -42,12 +42,38 @@ module.exports = {
 		]
 	},
 	devServer: {
+		port: 8080,
+		host: 'localhost',
+		open: true,
+		https: false,
 		proxy: {
 			'/3dtiles': {
 				target: 'http://localhost:8000', // Nginx服务器的地址和端口
 				changeOrigin: true,
+				pathRewrite: {
+					'^/3dtiles': ''
+				}
 			},
 		},
 	},
+
+	// devServer: {
+	// 	port: 8080,
+	// 	host: 'localhost',
+	// 	open: true,
+	// 	https: false,
+	// 	proxy: {
+	// 		'/api': {
+	// 			target: 'http://需要请求的地址/',
+	// 			ws: true,
+	// 			changeOrigin: true,
+	// 			pathRewrite: {
+	// 				'^/api': ''
+	// 			}
+	// 		}
+	// 	}
+
+	// }
+
 
 }

@@ -93,7 +93,7 @@ export default {
     // }
     add3dTiles() {
       var tileset = window.cesiumViewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url: '/static/3dtiles/tileset.json',
+        url: '/3dtiles/tileset.json',
         shadows: Cesium.ShadowMode.DISABLED,
         luminanceAtZenith: 1
       }));
