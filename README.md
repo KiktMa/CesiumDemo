@@ -1,8 +1,9 @@
-# cesiumvue-template(基于vue-cli 3.x)
+# cesiumDemo
 
->整合了cesium 和 vue-cli 3脚手架的模版,开发人员拿来即用
+>整合了cesium 和 vue-cli3脚手架的模版
 
-1.本项目为cesium + vue-cli3纯净版 除了vue模块和cesium模块 其他没有任何第三方模块
+1.本项目为cesium + vue-cli3纯净版
+2.目前仅使用该架构搭建了金字塔模型可视化
 
 ## 1. vue脚手架安装
 
